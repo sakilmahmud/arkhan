@@ -1,17 +1,5 @@
 <?php
 include 'connection.php';
-
-// Retrieve data from the "chambers" table
-$sql = "SELECT * FROM chambers WHERE `status` = 1";
-$result = $conn->query($sql);
-$chambers = [];
-// Check if there are any records
-if ($result->num_rows > 0) {
-  while ($row = $result->fetch_assoc()) {
-    $chambers[] = $row;
-  }
-}
-
 include_once('./header.php');
 ?>
 <!-- START SECTION BANNER -->
@@ -150,53 +138,75 @@ include_once('./header.php');
     </div>
     <div class="row animation" data-animation="fadeInUp" data-animation-delay="0.04s">
       <div class="col-12 text-center">
-        <div class="appointment_form">
-          <div class="row justify-content-center">
-            <div class="col-md-6">
-              <div class="field_form form_style3 animation" data-animation="fadeInUp" data-animation-delay="0.02s">
-                <form method="post" name="appointment_form" id="appointment_form">
-                  <div class="row">
-                    <div class="form-group col-12">
-                      <input required="required" placeholder="Patient Name *"
-                        class="form-control text-light bg-dark p-2" name="patient_name" type="text" />
-                    </div>
-                    <div class="form-group col-12">
-                      <input required="required" placeholder="Patient Mobile *"
-                        class="form-control text-light bg-dark p-2" name="patient_mobile" type="text" />
-                    </div>
-                    <div class="form-group col-12">
-                      <select required="required" class="form-control text-light bg-dark p-2" name="chamber_id"
-                        id="chamber_id">
-                        <option value="">Select Chamber</option>
-                        <?php
-                        // Populate the dropdown with chambers
-                        foreach ($chambers as $chamber) {
-                          echo "<option value='{$chamber['id']}'>{$chamber['name']}</option>";
-                        }
-                        ?>
-                      </select>
-                    </div>
-                    <div class="form-group col-12">
-                      <select required="required" class="form-control text-light bg-dark p-2" name="appointment_id"
-                        id="appointment_date">
-                        <option value="">Select Date</option>
-                        <!-- Dates will be loaded dynamically using AJAX based on the selected chamber -->
-                      </select>
-                    </div>
-                    <div class="col-lg-12">
-                      <button type="button" title="Book Now" class="btn btn-default rounded-0 btn-aylen"
-                        id="bookNowBtn">
-                        Book Now
-                      </button>
-                    </div>
-                    <div class="col-lg-12 text-center">
-                      <div id="appointment-msg" class="alert-msg text-center"></div>
-                    </div>
-                  </div>
-                </form>
-              </div>
-            </div>
-          </div>
+        <!-- Start Calendar -->
+        <?php
+        // Get current month and next month
+        $currentMonth = date('m');
+        $currentYear = date('Y');
+        $nextMonth = date('m', strtotime('+1 month'));
+        $nextYear = date('Y', strtotime('+1 month'));
+
+        // Get the first day and last day of the current month
+        $firstDayOfMonth = date('Y-m-01');
+        $lastDayOfMonth = date('Y-m-t');
+
+        // Get the current date
+        $today = date('Y-m-d');
+
+        // Get events data from the bookings table
+        $query = "SELECT DATE(appointment_date) AS ap_date, COUNT(*) AS appointment_count FROM bookings WHERE appointment_date >= '$today' GROUP BY DATE(appointment_date) ORDER BY ap_date";
+        $result = mysqli_query($conn, $query);
+
+        // Check if the query was successful
+        if ($result) {
+          $events = [];
+
+          // Fetch data from the result set
+          while ($row = mysqli_fetch_assoc($result)) {
+            $appointmentCount = $row['appointment_count'];
+            $eventTitle = "$appointmentCount Appointment" . ($appointmentCount > 1 ? 's' : '') . " Booked";
+            $eventStart = $row['ap_date'];
+
+            // Add the event to the events array
+            $events[] = ["title" => $eventTitle, "start" => $eventStart];
+          }
+        } else {
+          // Handle the error if the query fails
+          echo 'Error: ' . mysqli_error($conn);
+        }
+
+        ?>
+        <style>
+          #calendar {
+            max-width: 800px;
+            margin: 0 auto;
+          }
+
+          /* Style for past dates */
+          .fc-past {
+            color: #999;
+            /* Example styling for past dates */
+            pointer-events: none;
+            /* Disable pointer events for past dates */
+            background-color: rgba(255, 255, 255, 0.3);
+            /* Example background color for past dates */
+          }
+
+          .doctor-available {
+            background-color: #aaffaa;
+            /* Use your preferred color */
+          }
+
+          .fc-available {
+            background-color: springgreen;
+          }
+
+          .fc-day-today {
+            background-color: yellowgreen;
+          }
+        </style>
+        <div class="calendar">
+          <div id='calendar'></div>
         </div>
 
         <!-- END of Calendar -->
@@ -553,93 +563,189 @@ include_once('./header.php');
 </section>
 <!-- START SECTION CONTACT -->
 
-<!-- Add this in the head section of your HTML file -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.3/jquery.validate.min.js"></script>
-<!-- Add this script in your HTML file -->
+<!-- Booking Details Modal -->
+<div class="modal" id="booking_details_modal" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Booked Appointments</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <!-- AJAX response content will be displayed here -->
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Booking Modal -->
+<div class="modal" id="booking_modal" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Book Now</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form action="booking_appointment.php" method="POST" id="booking_form">
+          <input type="text" class="form-control mb-2" name="your_name" placeholder="Enter Your Name">
+          <input type="text" class="form-control" name="your_phone" placeholder="Enter Your Mobile Number">
+          <input type="hidden" name="appointment_date" id="appointment_date">
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary submit_form">Save changes</button>
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- End of Booking Modal -->
+<!-- Thank You Modal -->
+<div class="modal" id="thanks_modal" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Thank You</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        Your Booking is successfully completed!<br>
+        You will get confirmation soon.
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- End of Thank You Modal -->
+
 <script>
-  $(document).ready(function () {
-    // Validate the appointment form using jQuery Validate
-    $("#appointment_form").validate({
-      rules: {
-        patient_name: "required",
-        patient_mobile: {
-          required: true,
-          digits: true,
-          minlength: 10,
-          maxlength: 10
-        },
-        chamber_id: "required",
-        appointment_date: "required"
+  document.addEventListener('DOMContentLoaded', function () {
+    var calendarEl = document.getElementById('calendar');
+
+    var calendar = new FullCalendar.Calendar(calendarEl, {
+      initialView: 'dayGridMonth',
+      events: <?php echo json_encode($events); ?>,
+      headerToolbar: {
+        left: 'prev,next today',
+        center: 'title',
+        right: 'dayGridMonth,timeGridWeek,timeGridDay'
       },
-      messages: {
-        patient_mobile: {
-          digits: "Please enter a valid mobile number",
-          minlength: "Mobile number must be 10 digits",
-          maxlength: "Mobile number must be 10 digits"
+      selectable: true,
+      eventClick: function (info) {
+        console.log('Event: ', info.event.startStr);
+        console.log('Event: ', info.event.title);
+        show_booked_appointments(info.event.startStr);
+      },
+      dayMaxEvents: true,
+      dateClick: function (info) {
+        //alert('Clicked on: ' + info.dateStr);
+        custom(info);
+      },
+      select: function (info) {
+        //alert('Selected from: ' + info.startStr + ' to ' + info.endStr);
+        custom2(info);
+      },
+      validRange: {
+        start: '<?php echo date("Y-m-d", strtotime($firstDayOfMonth)); ?>',
+        end: '<?php echo date("Y-m-t", strtotime($nextYear . "-" . $nextMonth . "-01")); ?>'
+      },
+      dayCellDidMount: function (arg) {
+        // Check if the date is in the past
+        if (arg.date < new Date()) {
+          // Add the 'fc-past' class to the past date cells
+          arg.el.classList.add('fc-past');
+        }
+        // Check if the date is Sunday, Thursday, or Saturday
+        var dayOfWeek = arg.date.getDay();
+        if ([0, 3, 6].includes(dayOfWeek)) {
+          // Add the 'fc-disabled' class to disable other days
+          arg.el.classList.add('fc-available');
         }
       },
-      submitHandler: function (form) {
-        // Form is valid, submit it using AJAX
-        $.ajax({
-          type: "POST",
-          url: "submit_appointment.php", // Change this to your actual PHP file
-          data: $(form).serialize(), // Serialize the form data
-          success: function (response) {
-            // Handle the response from the server
-            $("#appointment-msg").html(response);
-
-            // Reset the form after successful submission
-            form.reset();
-
-            // Hide the success message after 5 seconds
-            setTimeout(function () {
-              $("#appointment-msg").empty();
-            }, 5000);
-          }
-        });
-      }
     });
 
-    // Submit form when Book Now button is clicked
-    $("#bookNowBtn").click(function () {
-      $("#appointment_form").submit();
-    });
-  });
-</script>
+    calendar.render();
 
-<script>
-  $(document).ready(function () {
-    // Function to load available dates based on selected chamber
-    function loadDates() {
-      var chamberId = $("#chamber_id").val();
+    function show_booked_appointments(booking_date) {
+      // Perform AJAX request
+      $.ajax({
+        type: 'POST',
+        url: 'get_appointments.php',
+        data: { booking_date: booking_date },
+        success: function (response) {
+          // Update the modal title with the booking date
+          $('#booking_details_modal .modal-title').text('Booked Appointments on ' + booking_date);
 
-      // Check if a chamber is selected
-      if (chamberId) {
-        // Use AJAX to fetch available dates for the selected chamber
-        $.ajax({
-          type: "GET",
-          url: "get_available_dates.php",
-          data: { chamber_id: chamberId },
-          dataType: "json",
-          success: function (dates) {
-            var dateDropdown = $("#appointment_date");
+          // Display the booked appointments data in the modal body
+          $('#booking_details_modal .modal-body').html(response);
 
-            // Clear existing options
-            dateDropdown.empty().append("<option value=''>Select Date</option>");
-
-            // Populate the dropdown with available dates
-            $.each(dates, function (index, date) {
-              dateDropdown.append($("<option></option>")
-                .attr("value", date.id)
-                .text(date.appointment_date));
-            });
-          }
-        });
-      }
+          // Show the booking details modal
+          $('#booking_details_modal').modal('show');
+        },
+        error: function (error) {
+          console.error('AJAX Error: ', error);
+        }
+      });
     }
 
-    // Attach event listener to the chamber dropdown
-    $("#chamber_id").change(loadDates);
+    function custom(info) {
+      //console.log("1st function", info);
+      $('#booking_modal').modal('show');
+      console.log(info.dateStr);
+      $('#appointment_date').val(info.dateStr);
+    }
+    function custom2(info) {
+      console.log("2nd function", info);
+    }
+
+  });
+
+</script>
+<script>
+  $(document).ready(function () {
+    // Handle form submission
+    $('.submit_form').on('click', function () {
+      // Get form data
+      var formData = $('#booking_form').serialize();
+
+      // Perform AJAX request
+      $.ajax({
+        type: 'POST',
+        url: 'booking_appointment.php',
+        data: formData,
+        success: function (response) {
+          // Handle the response from the server
+          console.log(response);
+
+          // Check if the response indicates success
+          if (response.trim() === 'Booking successful!') {
+            // Close the booking modal
+            $('#booking_modal').modal('hide');
+
+            // Show the thank you modal
+            $('#thanks_modal').modal('show');
+          } else {
+            // Handle other cases if needed
+            console.error('Booking failed: ', response);
+          }
+        },
+        error: function (error) {
+          console.error('AJAX Error: ', error);
+        }
+      });
+    });
   });
 </script>
 <?php
