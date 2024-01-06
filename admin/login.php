@@ -7,21 +7,21 @@ if (isset($_SESSION['user_id'])) {
 $msg = "";
 // Check if the form is submitted
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-	$email = $_POST["email"];
+	$input = $_POST["email"]; // Assuming the input field is named 'email', change it accordingly
 	$password = $_POST["password"];
 
 	// Query the database to check if the user exists
-	$sql = "SELECT id, email, password FROM users WHERE email = ?";
+	$sql = "SELECT id, email, username, password FROM users WHERE email = ? OR username = ?";
 	$stmt = $conn->prepare($sql);
 
 	if ($stmt) {
-		$stmt->bind_param("s", $email);
+		$stmt->bind_param("ss", $input, $input);
 		$stmt->execute();
 		$stmt->store_result();
 
 		if ($stmt->num_rows == 1) {
 			// User found, fetch the hashed password
-			$stmt->bind_result($userId, $dbEmail, $hashedPassword);
+			$stmt->bind_result($userId, $dbEmail, $dbUsername, $hashedPassword);
 			$stmt->fetch();
 
 			// Verify the provided password against the hashed password
@@ -29,6 +29,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 				// Password is correct, create a session and log in
 				$_SESSION["user_id"] = $userId;
 				$_SESSION["email"] = $dbEmail;
+				$_SESSION["username"] = $dbUsername; // Add username to the session if needed
 				header("Location: Dashboard.php"); // Redirect to the user's dashboard
 				exit;
 			} else {
@@ -44,6 +45,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 	} else {
 		$msg = "Error: " . $conn->error;
 	}
+
 
 	$conn->close();
 }

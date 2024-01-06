@@ -3,7 +3,6 @@
 include("../connection.php");
 
 include("./login_check.php");
-include_once("header.php");
 
 // Variables to store form input values
 $batch_no = uniqid(); // Generate a unique batch number
@@ -81,6 +80,7 @@ function addGalleries($title, $upload_id, $file_type)
     }
 }
 
+include_once("header.php");
 
 ?>
 

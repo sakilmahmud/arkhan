@@ -20,27 +20,25 @@ include_once('./header.php');
     <div class="container">
       <!-- STRART CONTAINER -->
       <div class="row justify-content-between align-items-center">
-        <div class="col-xl-6 col-md-7">
+        <div class="col-xl-6 col-md-7 order-2 order-md-1 py-2">
           <div class="banner_content text_white banner_center_content">
             <h2 class="animation" data-animation="fadeInUp" data-animation-delay="0.02s">
               Hello, I'm <br />Dr. A R Khan
             </h2>
             <div id="typed-strings" class="d-none">
-              <b>MBBS - Calcutta Medical College</b>
+              <b>MBBS - Kolkata Medical College</b>
               <b>MS - R G Kar Medical College</b>
             </div>
             <h4 class="animation" data-animation="fadeInUp" data-animation-delay="0.03s">
               <span id="typed-text" class="text_default"></span>
             </h4>
-            <p class="animation" data-animation="fadeInUp" data-animation-delay="0.04s">
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed
-              do eiusmod tempor incididunt ut labore.
-            </p>
+            <h4 class="animation" data-animation="fadeInUp" data-animation-delay="0.04s">
+              General, Laser and Laparoscopic Surgeon</h4>
             <a href="#appointment" class="page-scroll btn btn-default rounded-0 btn-aylen animation"
               data-animation="fadeInUp" data-animation-delay="0.05s">Book an Appointment</a>
           </div>
         </div>
-        <div class="col-xl-5 col-md-5">
+        <div class="col-xl-5 col-md-5 order-1 order-md-2">
           <div class="banner_img animation" data-animation="fadeInUp" data-animation-delay="0.02s">
             <img src="assets/images/my_image.png" alt="my_image" />
           </div>
@@ -77,7 +75,7 @@ include_once('./header.php');
     <div class="row">
       <div class="col-md-4">
         <div class="about_img animation" data-animation="fadeInUp" data-animation-delay="0.02s">
-          <img src="assets/images/about_img.png" alt="about_img" />
+          <img src="assets/images/about_img.jpg" alt="about_img" />
         </div>
       </div>
       <div class="col-md-8">

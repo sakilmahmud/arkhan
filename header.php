@@ -29,8 +29,6 @@
     <!-- Icon Font CSS -->
     <link rel="stylesheet" href="assets/css/ionicons.min.css" />
     <link rel="stylesheet" href="assets/css/themify-icons.css" />
-    <!-- FontAwesome CSS -->
-    <link rel="stylesheet" href="assets/css/all.min.css" />
     <!-- Flaticon Font CSS -->
     <link rel="stylesheet" href="assets/css/flaticon.css" />
     <!--- owl carousel CSS-->
@@ -39,13 +37,10 @@
     <link rel="stylesheet" href="assets/owlcarousel/css/owl.theme.default.min.css" />
     <!-- Magnific Popup CSS -->
     <link rel="stylesheet" href="assets/css/magnific-popup.css" />
-    <!-- Scrollbar Css -->
-    <link rel="stylesheet" href="assets/css/jquery.mCustomScrollbar.min.css" />
     <!-- Style CSS -->
     <link rel="stylesheet" href="assets/css/style.css" />
     <link rel="stylesheet" href="assets/css/responsive.css" />
 
-    <link rel="stylesheet" href="assets/fullcalendar/main.min.css" />
 
     <!-- Latest jQuery -->
     <script src="assets/js/jquery-1.12.4.min.js"></script>

@@ -1,9 +1,7 @@
 <?php
 // Include the database connection
 include("../connection.php");
-
 include("./login_check.php");
-include_once("header.php");
 // Check if the action parameter is set
 if (isset($_GET['action']) && $_GET['action'] === 'remove') {
     // Check if the ID parameter is set
@@ -57,6 +55,7 @@ $query = "SELECT g.id, g.title, u.stored_filename FROM galleries g
           WHERE g.file_type = 'image'";
 $result = $conn->query($query);
 
+include_once("header.php");
 ?>
 
 <main>
