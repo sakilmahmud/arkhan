@@ -11,6 +11,21 @@ if ($result->num_rows > 0) {
     $chambers[] = $row;
   }
 }
+function get_meta_value($page_id, $meta_key){
+  global $conn;
+
+  $sql = "SELECT `meta_value` FROM `page_meta` WHERE `page_id` = $page_id AND `meta_key` = '$meta_key'";
+  $result = $conn->query($sql);
+  // Check if there are any records
+  if ($result->num_rows > 0) {
+      $getMeta = $result->fetch_assoc();
+      if(!empty($getMeta)){
+        return $getMeta['meta_value'];
+      }
+  }
+  
+  return "";
+}
 
 include_once('./header.php');
 ?>
@@ -19,28 +34,49 @@ include_once('./header.php');
   <div class="banner_slide_content pb-0">
     <div class="container">
       <!-- STRART CONTAINER -->
+      <?php
+      $homePageDetails = [];
+      $page_id = 1;
+      
+      $sql = "SELECT p.*, u.stored_filename FROM pages p LEFT JOIN uploads u ON p.featured_image_id = u.id WHERE p.id = $page_id";
+      $result = $conn->query($sql);
+      // Check if there are any records
+      if ($result->num_rows > 0) {
+          $homePageDetails = $result->fetch_assoc();
+      } 
+      
+      $homeFeaturedImage = (!empty($homePageDetails) && $homePageDetails['stored_filename'] !="" ) ? "assets/uploads/".$homePageDetails['stored_filename'] : "assets/images/hero.png";
+      
+      $homeContent = (!empty($homePageDetails) && $homePageDetails['content'] !="" ) ? $homePageDetails['content'] : "";
+
+      $specialist = get_meta_value($page_id, "specialist");
+      $degree_1 = get_meta_value($page_id, "degree_1");
+      $degree_2 = get_meta_value($page_id, "degree_2");
+      $degree_3 = get_meta_value($page_id, "degree_3");
+      
+      ?>
       <div class="row justify-content-between align-items-center">
         <div class="col-xl-6 col-md-7 order-2 order-md-1 py-2">
           <div class="banner_content text_white banner_center_content">
-            <h2 class="animation" data-animation="fadeInUp" data-animation-delay="0.02s">
-              Hello, I'm <br />Dr. A R Khan
-            </h2>
-            <div id="typed-strings" class="d-none">
-              <b>MBBS - Kolkata Medical College</b>
-              <b>MS - R G Kar Medical College</b>
-            </div>
+            
+            <?php echo ($homeContent !="") ? "<h2 class='animation' data-animation='fadeInUp' data-animation-delay='0.02s'>$homeContent</h2>" : "" ?>
+
+            <?php echo ($specialist !="") ? "<div id='typed-strings' class='d-none'><b>$specialist</b></div>" : "" ?>
+            
             <h4 class="animation" data-animation="fadeInUp" data-animation-delay="0.03s">
               <span id="typed-text" class="text_default"></span>
             </h4>
-            <h4 class="animation" data-animation="fadeInUp" data-animation-delay="0.04s">
-              General, Laser and Laparoscopic Surgeon</h4>
+            
+            <?php echo ($degree_1 !="") ? "<h4 class='animation' data-animation='fadeInUp' data-animation-delay='0.04s'>$degree_1</h4>" : "" ?>
+            <?php echo ($degree_2 !="") ? "<h4 class='animation' data-animation='fadeInUp' data-animation-delay='0.05s'>$degree_2</h4>" : "" ?>
+            <?php echo ($degree_3 !="") ? "<h4 class='animation' data-animation='fadeInUp' data-animation-delay='0.05s'>$degree_3</h4>" : "" ?>
             <a href="#appointment" class="page-scroll btn btn-default rounded-0 btn-aylen animation"
-              data-animation="fadeInUp" data-animation-delay="0.05s">Book an Appointment</a>
+              data-animation="fadeInUp" data-animation-delay="0.06s">Book an Appointment</a>
           </div>
         </div>
         <div class="col-xl-5 col-md-5 order-1 order-md-2">
           <div class="banner_img animation" data-animation="fadeInUp" data-animation-delay="0.02s">
-            <img src="assets/images/my_image.png" alt="my_image" />
+            <img src="<?php echo $homeFeaturedImage; ?>" alt="my_image" />
           </div>
         </div>
       </div>
@@ -73,9 +109,31 @@ include_once('./header.php');
 <section id="about" class="bg_black4">
   <div class="container">
     <div class="row">
+      <?php
+      $aboutPageDetails = [];
+      $page_id = 3;
+      
+      $sql = "SELECT p.*, u.stored_filename FROM pages p LEFT JOIN uploads u ON p.featured_image_id = u.id WHERE p.id = $page_id";
+      $result = $conn->query($sql);
+      // Check if there are any records
+      if ($result->num_rows > 0) {
+          $aboutPageDetails = $result->fetch_assoc();
+      } 
+      
+      $aboutFeaturedImage = (!empty($aboutPageDetails) && $aboutPageDetails['stored_filename'] !="" ) ? "assets/uploads/".$aboutPageDetails['stored_filename'] : "assets/images/about_img.jpg";
+      
+      $aboutContent = (!empty($aboutPageDetails) && $aboutPageDetails['content'] !="" ) ? $aboutPageDetails['content'] : "";
+
+      $dob = get_meta_value($page_id, "dob");
+      $phone = get_meta_value($page_id, "phone");
+      $email = get_meta_value($page_id, "email");
+      $address = get_meta_value($page_id, "address");
+      $website = get_meta_value($page_id, "website");
+      
+      ?>
       <div class="col-md-4">
         <div class="about_img animation" data-animation="fadeInUp" data-animation-delay="0.02s">
-          <img src="assets/images/about_img.jpg" alt="about_img" />
+          <img src="<?php echo $aboutFeaturedImage; ?>" alt="about_img" />
         </div>
       </div>
       <div class="col-md-8">
@@ -83,46 +141,17 @@ include_once('./header.php');
           <div class="heading_s1 heading_light mb-3">
             <h2>About Me</h2>
           </div>
-          <p>
-            Nam eget neque pellentesque efficitur neque at, ornare orci.
-            Vestibulum ligula orci volutpat id aliquet eget, consectetur
-            eget ante. Duis pharetra for nec rhoncus felis sagittis nec amet
-            ultricies lorem.
-          </p>
-          <p>
-            All the Lorem Ipsum generators on the Internet tend to repeat
-            predefined chunks as necessary.Iipsum dolor sit amet consectetur
-            adipiscing elitllus blandit massa enim.
-          </p>
+          <?php echo $aboutContent; ?>
           <hr />
           <div class="heading_s1 heading_light mb-4">
             <h5>Basic Info</h5>
           </div>
           <ul class="profile_info list_none">
-            <li>
-              <span class="title">Date of birth:</span>
-              <p>20 August 1990</p>
-            </li>
-            <li>
-              <span class="title">Phone No:</span>
-              <p>+ (123) 1512-578</p>
-            </li>
-            <li>
-              <span class="title">Email:</span>
-              <a href="mailto:info@sitename.com">mymail@gmail.com</a>
-            </li>
-            <li>
-              <span class="title">Address:</span>
-              <p>123 Street, Old Trafford, London</p>
-            </li>
-            <li>
-              <span class="title">Website:</span>
-              <p>www.mywebsite.com</p>
-            </li>
-            <li>
-              <span class="title">Freelance:</span>
-              <p>Available</p>
-            </li>
+            <?php echo ($dob !="") ? "<li><span class='title'>Date of Birth:</span><p>$dob</p></li>" : "" ?>
+            <?php echo ($phone !="") ? "<li><span class='title'>Phone No:</span><p>$phone</p></li>" : "" ?>
+            <?php echo ($email !="") ? "<li><span class='title'>Email:</span><p>$email</p></li>" : "" ?>
+            <?php echo ($address !="") ? "<li><span class='title'>Address:</span><p>$address</p></li>" : "" ?>
+            <?php echo ($website !="") ? "<li><span class='title'>Website:</span><p>$website</p></li>" : "" ?>
           </ul>
         </div>
       </div>
@@ -327,175 +356,6 @@ include_once('./header.php');
 </section>
 <!-- END SECTION COUNTER -->
 
-<!-- START WORK EXPERIENCES -->
-<section id="experience" class="bg_black4">
-  <div class="container">
-    <div class="row justify-content-center">
-      <div class="col-xl-6 col-lg-7 col-md-9 text-center">
-        <div class="heading_s1 heading_light animation" data-animation="fadeInUp" data-animation-delay="0.02s">
-          <h2>Work Experiences</h2>
-        </div>
-        <p class="animation text-white" data-animation="fadeInUp" data-animation-delay="0.03s">
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus
-          blandit massa enim. Nullam id varius nunc id varius nunc.
-        </p>
-      </div>
-    </div>
-    <div class="row animation" data-animation="fadeInUp" data-animation-delay="0.04s">
-      <div class="col-lg-4 col-sm-6">
-        <div class="icon_box icon_box_style_2 box_dark">
-          <div class="icon_box_content text_white">
-            <h4>UI/UX Designer</h4>
-            <p><span class="text_default">2002-2006</span> Adobe Inc.</p>
-            <hr />
-            <p>
-              There are many variations of passages of Lorem Ipsum
-              available, but the majority have suffered alteration in some
-              form
-            </p>
-          </div>
-        </div>
-      </div>
-      <div class="col-lg-4 col-sm-6">
-        <div class="icon_box icon_box_style_2 box_dark">
-          <div class="icon_box_content text_white">
-            <h4>Web Design</h4>
-            <p><span class="text_default">2007-2010</span> Google Inc.</p>
-            <hr />
-            <p>
-              There are many variations of passages of Lorem Ipsum
-              available, but the majority have suffered alteration in some
-              form
-            </p>
-          </div>
-        </div>
-      </div>
-      <div class="col-lg-4 col-sm-6">
-        <div class="icon_box icon_box_style_2 box_dark">
-          <div class="icon_box_content text_white">
-            <h4>Web Development</h4>
-            <p><span class="text_default">2010-2013</span> Adobe Inc.</p>
-            <hr />
-            <p>
-              There are many variations of passages of Lorem Ipsum
-              available, but the majority have suffered alteration in some
-              form
-            </p>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-<!-- END WORK EXPERIENCES -->
-
-<!-- START SECTION TESTIMONIAL -->
-<section class="bg_black2">
-  <div class="container">
-    <div class="row justify-content-center">
-      <div class="col-xl-6 col-lg-7 col-md-9 text-center">
-        <div class="heading_s1 heading_light animation" data-animation="fadeInUp" data-animation-delay="0.02s">
-          <h2>Clients Testimonials</h2>
-        </div>
-        <p class="animation text-white" data-animation="fadeInUp" data-animation-delay="0.03s">
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus
-          blandit massa enim. Nullam id varius nunc id varius nunc.
-        </p>
-        <div class="cleafix small_divider"></div>
-      </div>
-    </div>
-    <div class="row justify-content-center">
-      <div class="col-md-12 animation" data-animation="fadeInUp" data-animation-delay="0.04s">
-        <div class="carousel_slider testimonial_style1 owl-carousel owl-theme" data-margin="20" data-dots="false"
-          data-loop="true" data-autoplay="true"
-          data-responsive='{"0":{"items": "1"}, "768":{"items": "2"}, "1199":{"items": "3"}}'>
-          <div class="item">
-            <div class="testimonial_box box_dark text_white">
-              <div class="testimonial_user">
-                <div class="testimonial_img">
-                  <img src="assets/images/client_img1.jpg" alt="client" />
-                </div>
-                <div class="client_info">
-                  <h6>Lissa Castro</h6>
-                  <span>Developer</span>
-                </div>
-              </div>
-              <div class="testi_meta">
-                <p>
-                  Sed ut perspiciatis unde omnis iste natus error sit
-                  voluptatem accusantium doloremque laudantium, quaeillo
-                  inventore veritatis et quasi architecto explicabo.
-                </p>
-              </div>
-            </div>
-          </div>
-          <div class="item">
-            <div class="testimonial_box box_dark text_white">
-              <div class="testimonial_user">
-                <div class="testimonial_img">
-                  <img src="assets/images/client_img2.jpg" alt="client" />
-                </div>
-                <div class="client_info">
-                  <h6>Alden Smith</h6>
-                  <span>Creative Designer</span>
-                </div>
-              </div>
-              <div class="testi_meta">
-                <p>
-                  Sed ut perspiciatis unde omnis iste natus error sit
-                  voluptatem accusantium doloremque laudantium, quaeillo
-                  inventore veritatis et quasi architecto explicabo.
-                </p>
-              </div>
-            </div>
-          </div>
-          <div class="item">
-            <div class="testimonial_box box_dark text_white">
-              <div class="testimonial_user">
-                <div class="testimonial_img">
-                  <img src="assets/images/client_img3.jpg" alt="client" />
-                </div>
-                <div class="client_info">
-                  <h6>Daisy Lana</h6>
-                  <span>Creative Director</span>
-                </div>
-              </div>
-              <div class="testi_meta">
-                <p>
-                  Sed ut perspiciatis unde omnis iste natus error sit
-                  voluptatem accusantium doloremque laudantium, quaeillo
-                  inventore veritatis et quasi architecto explicabo.
-                </p>
-              </div>
-            </div>
-          </div>
-          <div class="item">
-            <div class="testimonial_box box_dark text_white">
-              <div class="testimonial_user">
-                <div class="testimonial_img">
-                  <img src="assets/images/client_img4.jpg" alt="client" />
-                </div>
-                <div class="client_info">
-                  <h6>Helena Amos</h6>
-                  <span>Creative Designer</span>
-                </div>
-              </div>
-              <div class="testi_meta">
-                <p>
-                  Sed ut perspiciatis unde omnis iste natus error sit
-                  voluptatem accusantium doloremque laudantium, quaeillo
-                  inventore veritatis et quasi architecto explicabo.
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-<!-- END SECTION TESTIMONIAL -->
-
 <!-- START SECTION CONTACT -->
 <section id="contact" class="bg_black2">
   <div class="container">
@@ -541,9 +401,7 @@ include_once('./header.php');
       </div>
       <div class="col-md-6">
         <div class="contact_map mt-4 mt-md-0 animation" data-animation="fadeInUp" data-animation-delay="0.03s">
-          <iframe
-            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d235850.81212011125!2d88.18254112599966!3d22.535343439863773!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x39f882db4908f667%3A0x43e330e68f6c2cbc!2sKolkata%2C%20West%20Bengal!5e0!3m2!1sen!2sin!4v1702958551263!5m2!1sen!2sin"
-            allowfullscreen="" loading="lazy"></iframe>
+        <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d15467.770341155656!2d88.18390104074729!3d22.19239329013198!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3a025fa2c05c1383%3A0x28f34e2d58d32495!2sDiamond%20Harbour%2C%20West%20Bengal!5e0!3m2!1sen!2sin!4v1706039189451!5m2!1sen!2sin" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
         </div>
       </div>
     </div>

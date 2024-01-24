@@ -5,7 +5,7 @@
             <div class="row">
                 <div class="col-12 text-center">
                     <div class="footer_logo">
-                        <a href="index-2.html"><img alt="logo" src="assets/images/logo_white.png" /></a>
+                        <a href="index-2.html"><img style="width:25%" alt="logo" src="assets/images/logo.png" /></a>
                     </div>
                     <ul class="list_none social_icons pt-4">
                         <li>
@@ -75,8 +75,6 @@
 <script src="assets/js/typed.min.js"></script>
 <!-- typed text js -->
 <script src="assets/js/typed-text.js"></script>
-<!-- mCustomScrollbar.concat.min js -->
-<script src="assets/js/jquery.mCustomScrollbar.concat.min.js"></script>
 <!-- scripts js -->
 <script src="assets/js/scripts.js"></script>
 <script src="assets/js/custom.js"></script>

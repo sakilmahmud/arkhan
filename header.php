@@ -7,9 +7,9 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="description"
-        content="MBBS (Calcutta Medical College), MS (R G Kar Medical College), Diamond Harbour Medical College" />
+        content="MBBS (Kolkata Medical College), MS (R G Kar Medical College), Diamond Harbour Medical College" />
     <meta name="keywords"
-        content="MBBS, MS, Calcutta Medical College, R G Kar Medical College, Diamond Harbour Medical College" />
+        content="MBBS, MS, Kolkata Medical College, R G Kar Medical College, Diamond Harbour Medical College" />
     <meta name="author" content="Dr. A R Khan" />
 
     <!-- Title -->
@@ -66,10 +66,8 @@
     <header class="header_wrap fixed-top light_skin hover_menu_style3 transparent-header">
         <div class="container">
             <nav class="navbar navbar-expand-lg">
-                <a class="navbar-brand page-scroll" href="#home_section">
-                    <img class="logo_light" src="assets/images/logo_white.png" alt="logo" />
-                    <img class="logo_dark" src="assets/images/logo_dark.png" alt="logo" />
-                    <img class="logo_default" src="assets/images/logo_dark.png" alt="logo" />
+                <a class="navbar-brand page-scroll" style="width:25%" href="#home_section">
+                    <img src="./assets/images/logo.png" alt="logo" />
                 </a>
                 <button class="navbar-toggler" type="button" data-toggle="collapse"
                     data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
@@ -78,9 +76,7 @@
                 </button>
                 <div class="collapse navbar-collapse justify-content-end" id="navbarSupportedContent">
                     <a class="navbar-brand page-scroll" href="#home_section">
-                        <img class="logo_light" src="assets/images/logo_white.png" alt="logo" />
-                        <img class="logo_dark" src="assets/images/logo_dark.png" alt="logo" />
-                        <img class="logo_default" src="assets/images/logo_dark.png" alt="logo" />
+                        <img src="./assets/images/logo.png" alt="logo" />
                     </a>
                     <ul class="navbar-nav">
                         <li>
@@ -94,9 +90,6 @@
                         </li>
                         <li>
                             <a class="nav-link page-scroll" href="#portfolio">Portfolio</a>
-                        </li>
-                        <li>
-                            <a class="nav-link page-scroll" href="#experience">Experience</a>
                         </li>
                         <li>
                             <a class="nav-link page-scroll" href="#contact">contact</a>

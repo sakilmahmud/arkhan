@@ -1,6 +1,6 @@
 <?php
 // Include the database connection
-include("../db_connection.php");
+include("../connection.php");
 include("./login_check.php");
 include("./header.php");
 ?>
@@ -24,7 +24,7 @@ include("./header.php");
 
             
                 // Fetch the existing user data from the database
-                $sql = "SELECT * FROM admin_login WHERE id = ?";
+                $sql = "SELECT * FROM users WHERE id = ?";
                 $stmt = $conn->prepare($sql);
 
                 if ($stmt) {
@@ -45,7 +45,7 @@ include("./header.php");
                                     $hashedNewPassword = password_hash($newPassword, PASSWORD_BCRYPT);
 
                                     // Update password in the database
-                                    $updateSql = "UPDATE admin_login SET password = ? WHERE id = ?";
+                                    $updateSql = "UPDATE users SET password = ? WHERE id = ?";
                                     $updateStmt = $conn->prepare($updateSql);
 
                                     if ($updateStmt) {

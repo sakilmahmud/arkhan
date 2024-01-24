@@ -10,7 +10,7 @@ include_once("header.php");
         <h1 class="mt-4">Dashboard</h1>
         <div class="row">
             <div class="col-xl-12 col-md-12">
-                <h4>Welcome to Airport Ride Transfer Admin Panel</h4>
+                <h4>Welcome to A R Khan Offical Admin Panel</h4>
             </div>
         </div>
     </div>
